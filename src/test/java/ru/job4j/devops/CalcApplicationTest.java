@@ -14,4 +14,13 @@ class CalcApplicationTests {
     void mainMethodTest() {
         CalcApplication.main(new String[] {});
     }
+
+    @Test
+    public void whenNegativeNumber() {
+        var input = new TwoArgs(-1, -1);
+        var expected = new Result(-2);
+        var output = new CalcController().summarise(input);
+        assertThat(output.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
+        assertThat(output.getBody()).isEqualTo(expected);
+    }
 }
