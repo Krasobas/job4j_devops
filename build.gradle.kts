@@ -48,3 +48,14 @@ dependencies {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+tasks.register<Zip>("zipJavaDoc") {
+    group = "documentation"
+    description = "Packs the generated Javadoc into a zip archive"
+
+    dependsOn("javadoc")
+
+    from("build/docs/javadoc")
+    archiveFileName.set("javadoc.zip")
+    destinationDirectory.set(layout.buildDirectory.dir("archives"))
+}
