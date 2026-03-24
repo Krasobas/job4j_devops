@@ -16,6 +16,7 @@ public class Result {
      */
     public Result() {
     }
+
     /**
      * Constructor with value
      * @param value to set

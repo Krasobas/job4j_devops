@@ -17,6 +17,7 @@ public class TwoArgs {
      */
     public TwoArgs() {
     }
+
     /**
      * All args constructor
      * @param first to set
