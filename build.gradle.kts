@@ -67,3 +67,24 @@ tasks.register<Zip>("zipJavaDoc") {
     archiveFileName.set("javadoc.zip")
     destinationDirectory.set(layout.buildDirectory.dir("archives"))
 }
+
+tasks.register("checkJarSize") {
+    group = "verification"
+    description = "Checks the size of the generated JAR file."
+
+    dependsOn("jar")
+
+    doLast {
+        val jarFile = file("build/libs/${project.name}-${project.version}.jar")
+        if (jarFile.exists()) {
+            val sizeInMB = jarFile.length() / (1024 * 1024)
+            if (sizeInMB > 5) {
+                println("WARNING: JAR file exceeds the size limit of 5 MB. Current size: ${sizeInMB} MB")
+            } else {
+                println("JAR file is within the acceptable size limit. Current size: ${sizeInMB} MB")
+            }
+        } else {
+            println("JAR file not found. Please make sure the build process completed successfully.")
+        }
+    }
+}
