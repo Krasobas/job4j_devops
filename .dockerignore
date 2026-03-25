@@ -6,3 +6,4 @@
 !settings.gradle.kts
 !gradle.properties
 !gradle/libs.versions.toml
+!build/libs/*.jar
