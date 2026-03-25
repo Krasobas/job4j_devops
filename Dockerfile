@@ -4,8 +4,7 @@ COPY build.gradle.kts settings.gradle.kts gradle.properties ./
 COPY gradle/libs.versions.toml ./gradle/
 RUN gradle --no-daemon dependencies
 
-COPY config ./config
-COPY src ./src
+COPY . .
 
 RUN gradle --no-daemon clean build -x test
 
