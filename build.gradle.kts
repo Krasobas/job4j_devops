@@ -47,6 +47,7 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.assertj.core)
+    testImplementation(libs.h2database)
 }
 
 tasks.spotbugsMain {

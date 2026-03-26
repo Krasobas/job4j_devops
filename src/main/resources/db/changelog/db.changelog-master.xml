@@ -6,6 +6,6 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <include file="changeset/001_ddl_create_tables.sql"
-             author="Petr Arsentev"
+             author="Krasobas"
              relativeToChangelogFile="true"/>
 </databaseChangeLog>

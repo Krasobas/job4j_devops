@@ -16,3 +16,4 @@ spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-start
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
 liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase-core" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+h2database = { module = "com.h2database:h2"}
