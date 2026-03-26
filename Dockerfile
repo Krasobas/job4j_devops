@@ -8,32 +8,8 @@ COPY . .
 
 RUN gradle --no-daemon clean build -x test
 
-RUN jar xf /app/build/libs/*.jar
-
-RUN jdeps --ignore-missing-deps -q \
-	--recursive \
-	--multi-release 21 \
-	--print-module-deps \
-	--class-path 'BOOT-INF/lib/*' \
-	/app/build/libs/*.jar > deps.info
-
-RUN jlink \
-	--add-modules $(cat deps.info) \
-	--strip-debug \
-	--compress zip-6 \
-	--no-header-files \
-	--no-man-pages \
-	--output /custom-jre
-
-FROM alpine:3.23
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-
-ENV JAVA_HOME=/opt/java
-ENV PATH="${JAVA_HOME}/bin:${PATH}"
-
-COPY --from=build /custom-jre $JAVA_HOME
-COPY --from=build /app/build/libs/*.jar ./app.jar
-
-EXPOSE 8080
-
+COPY --from=build /app/build/libs/*.jar app.jar
+EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]
