@@ -45,6 +45,7 @@ pipeline {
                         docker push $DOCKER_USER/job4j_devops:${BUILD_NUMBER}
                         docker push $DOCKER_USER/job4j_devops:latest
                         docker logout
+                        docker rmi job4j_devops:${BUILD_NUMBER} $DOCKER_USER/job4j_devops:${BUILD_NUMBER} $DOCKER_USER/job4j_devops:latest || true
                     '''
                 }
             }
@@ -61,15 +62,5 @@ pipeline {
                 telegramSend(message: buildInfo)
             }
         }
-    }
-    success {
-        sh '''
-            docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | \
-            grep "job4j_devops" | \
-            grep -v "latest" | \
-            grep -v "${BUILD_NUMBER}" | \
-            awk '{print $2}' | \
-            xargs -r docker rmi || true
-        '''
     }
 }
