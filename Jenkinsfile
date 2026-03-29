@@ -53,17 +53,23 @@ pipeline {
 
     post {
         always {
-            node('agent1') {
-                script {
-                    def msg = "Build #${currentBuild.number}\n" +
-                              "Status: ${currentBuild.currentResult}\n" +
-                              "Duration: ${currentBuild.durationString}"
-                    telegramSend(message: msg)
-                }
+            script {
+                def buildInfo = "Build number: ${currentBuild.number}\n" +
+                                "Build status: ${currentBuild.currentResult}\n" +
+                                "Started at: ${new Date(currentBuild.startTimeInMillis)}\n" +
+                                "Duration so far: ${currentBuild.durationString}"
+                telegramSend(message: buildInfo)
             }
         }
-        success {
-            sh 'docker image prune -f --filter "until=24h" || true'
-        }
+    }
+    success {
+        sh '''
+            docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | \
+            grep "job4j_devops" | \
+            grep -v "latest" | \
+            grep -v "${BUILD_NUMBER}" | \
+            awk '{print $2}' | \
+            xargs -r docker rmi || true
+        '''
     }
 }
