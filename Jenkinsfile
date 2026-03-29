@@ -45,7 +45,11 @@ pipeline {
                         docker push $DOCKER_USER/job4j_devops:${BUILD_NUMBER}
                         docker push $DOCKER_USER/job4j_devops:latest
                         docker logout
-                        docker rmi job4j_devops:${BUILD_NUMBER} $DOCKER_USER/job4j_devops:${BUILD_NUMBER} $DOCKER_USER/job4j_devops:latest || true
+                        docker images --format "{{.Repository}}:{{.Tag}}" | \
+                                                    grep "job4j_devops" | \
+                                                    grep -v "latest" | \
+                                                    grep -v "${BUILD_NUMBER}" | \
+                                                    xargs -r docker rmi || true
                     '''
                 }
             }
