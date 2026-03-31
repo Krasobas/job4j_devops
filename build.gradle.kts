@@ -6,6 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
     id("com.github.spotbugs") version "6.0.26"
     id("org.liquibase.gradle") version "3.1.0"
+    id("co.uzzu.dotenv.gradle") version "4.0.0"
 }
 
 buildscript {
@@ -21,9 +22,9 @@ liquibase {
     activities.register("main") {
         this.arguments = mapOf(
             "logLevel"      to "info",
-            "url"           to (System.getenv("SPRING_DATASOURCE_URL") ?: "jdbc:postgresql://localhost:5432/job4j_devops"),
-            "username"      to (System.getenv("SPRING_DATASOURCE_USERNAME") ?: "postgres"),
-            "password"      to (System.getenv("SPRING_DATASOURCE_PASSWORD") ?: "password"),
+            "url"           to env.SPRING_DATASOURCE_URL.value,
+            "username"      to env.SPRING_DATASOURCE_USERNAME.value,
+            "password"      to env.SPRING_DATASOURCE_PASSWORD.value,
             "changelogFile" to "src/main/resources/db/changelog/db.changelog-master.xml"
         )
     }
@@ -143,5 +144,11 @@ tasks.register<Zip>("archiveResources") {
 
     doLast {
         println("Resources archived successfully at ${outputDir.get().asFile.absolutePath}")
+    }
+}
+
+tasks.register("profile") {
+    doFirst {
+        println(env.SPRING_DATASOURCE_URL.value)
     }
 }
