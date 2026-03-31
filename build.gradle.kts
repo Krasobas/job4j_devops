@@ -1,10 +1,33 @@
 plugins {
-	checkstyle
-	java
-	jacoco
-	id("org.springframework.boot") version "3.4.0"
-	id("io.spring.dependency-management") version "1.1.6"
+    checkstyle
+    java
+    jacoco
+    id("org.springframework.boot") version "3.4.0"
+    id("io.spring.dependency-management") version "1.1.6"
     id("com.github.spotbugs") version "6.0.26"
+    id("org.liquibase.gradle") version "3.1.0"
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.liquibase:liquibase-core:4.30.0")
+    }
+}
+
+liquibase {
+    activities.register("main") {
+        this.arguments = mapOf(
+            "logLevel"      to "info",
+            "url"           to (System.getenv("SPRING_DATASOURCE_URL") ?: "jdbc:postgresql://localhost:5432/job4j_devops"),
+            "username"      to (System.getenv("SPRING_DATASOURCE_USERNAME") ?: "postgres"),
+            "password"      to (System.getenv("SPRING_DATASOURCE_PASSWORD") ?: "password"),
+            "changelogFile" to "src/main/resources/db/changelog/db.changelog-master.xml"
+        )
+    }
+    runList = "main"
 }
 
 group = "ru.job4j.devops"
@@ -33,21 +56,32 @@ tasks.jacocoTestCoverageVerification {
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
+    // Production dependencies
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.postgresql)
     implementation(libs.liquibase.core)
+
+    // Test dependencies
     testImplementation(libs.spring.boot.starter.test)
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.assertj.core)
     testImplementation(libs.h2database)
+
+    // Liquibase Runtime unified via libs
+    liquibaseRuntime(libs.liquibase.core)
+    liquibaseRuntime(libs.postgresql)
+    liquibaseRuntime(libs.picocli)
+    liquibaseRuntime(libs.commons.lang3)
+    liquibaseRuntime(libs.logback.core)
+    liquibaseRuntime(libs.logback.classic)
 }
 
 tasks.spotbugsMain {
@@ -58,8 +92,7 @@ tasks.spotbugsMain {
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
-//    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
+    useJUnitPlatform()
 }
 
 tasks.register<Zip>("zipJavaDoc") {

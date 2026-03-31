@@ -5,6 +5,9 @@ assertj-core = "3.24.2"
 spring-boot = "3.4.0"
 liquibase-core = "4.30.0"
 postgresql = "42.7.4"
+picocli = "4.7.6"
+commons-lang3 = "3.17.0"
+logback = "1.5.16"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
@@ -16,4 +19,8 @@ spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-start
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
 liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase-core" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
-h2database = { module = "com.h2database:h2"}
+h2database = { module = "com.h2database:h2" }
+picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
+logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
