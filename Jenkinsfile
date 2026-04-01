@@ -47,40 +47,7 @@ pipeline {
     post {
         always {
             script {
-                // Безопасное получение инфо о коммите
-                def commitMsg = "No changes or manual build"
-                try {
-                    def changeLogSets = currentBuild.changeSets
-                    if (changeLogSets != null && !changeLogSets.isEmpty()) {
-                        def entries = changeLogSets[0].items
-                        if (entries != null && entries.length > 0) {
-                            commitMsg = "${entries[0].msg} [${entries[0].author.fullName}]"
-                        }
-                    }
-                } catch (Exception e) {
-                    echo "Could not get commit info: ${e.message}"
-                }
-
-                def statusIcon = (currentBuild.currentResult == 'SUCCESS') ? "✅" : "❌"
-
-                def msg = """
-${statusIcon} BUILD ${currentBuild.currentResult}
----------------------------
-🚀 Project: ${env.JOB_NAME}
-🔢 Build: #${env.BUILD_NUMBER}
-📝 Commit: ${commitMsg}
-⏱️ Duration: ${currentBuild.durationString}
----------------------------
-🔗 URL: ${env.BUILD_URL}
-🔍 Logs: ${env.BUILD_URL}console
----------------------------
-                """.trim()
-
-                try {
-                    telegramSend(message: msg)
-                } catch (Exception e) {
-                    echo "Telegram failed: ${e.message}"
-                }
+                telegramSend(message: "Проверка связи")
             }
         }
     }
