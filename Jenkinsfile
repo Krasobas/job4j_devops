@@ -44,11 +44,31 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            script {
-                telegramSend(message: "Проверка связи")
+post {
+    always {
+        script {
+            def statusIcon = (currentBuild.currentResult == 'SUCCESS') ? "✅" : "❌"
+            def statusText = (currentBuild.currentResult == 'SUCCESS') ? "SUCCESS" : "FAILED"
+
+            def msg = """
+${statusIcon} BUILD ${statusText}
+---------------------------
+🚀 Project: ${env.JOB_NAME}
+🔢 Build: #${env.BUILD_NUMBER}
+⏱️ Duration: ${currentBuild.durationString}
+📅 Time: ${new Date().format('yyyy-MM-dd HH:mm')}
+---------------------------
+🔗 URL: ${env.BUILD_URL}
+🔍 Logs: ${env.BUILD_URL}console
+---------------------------
+            """.trim()
+
+            try {
+                telegramSend(message: msg)
+            } catch (Exception e) {
+                echo "Telegram error: ${e.toString()}"
             }
         }
     }
+}
 }
