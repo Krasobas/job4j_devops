@@ -47,17 +47,19 @@ pipeline {
     post {
         always {
             script {
-                def buildStatus = currentBuild.currentResult ?: "FINISHED"
+                def status = currentBuild.currentResult
+                def emoji = status == 'SUCCESS' ? '✅' : status == 'FAILURE' ? '❌' : '⚠️'
+                def duration = currentBuild.durationString.replace(' and counting', '')
 
-                def buildInfo = "=== BUILD " + buildStatus + " ===\n" +
-                                "Project: " + env.JOB_NAME + "\n" +
-                                "Number:  #" + env.BUILD_NUMBER + "\n" +
-                                "----------------------------\n" +
-                                "Started:  " + new Date(currentBuild.startTimeInMillis) + "\n" +
-                                "Duration: " + currentBuild.durationString + "\n" +
-                                "----------------------------\n" +
-                                "Link: " + env.BUILD_URL + "\n" +
-                                "Console: " + env.BUILD_URL + "console"
+                def buildInfo = """
+    ${emoji} *${env.JOB_NAME}* — #${currentBuild.number}
+    ━━━━━━━━━━━━━━━━━━━━
+    📌 Status:    *${status}*
+    🕐 Started:   ${new Date(currentBuild.startTimeInMillis).format('dd.MM.yyyy HH:mm:ss')}
+    ⏱ Duration:  ${duration}
+    ━━━━━━━━━━━━━━━━━━━━
+    🔗 [Open in Jenkins](${env.BUILD_URL})
+                """.trim()
 
                 telegramSend(message: buildInfo)
             }
