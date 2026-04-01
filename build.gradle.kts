@@ -76,6 +76,9 @@ dependencies {
     testImplementation(libs.assertj.core)
     testImplementation(libs.h2database)
 
+    testImplementation("org.testcontainers:testcontainers:2.0.4")
+    testImplementation("org.testcontainers:postgresql:1.21.4")
+
     // Liquibase Runtime unified via libs
     liquibaseRuntime(libs.liquibase.core)
     liquibaseRuntime(libs.postgresql)
@@ -84,6 +87,27 @@ dependencies {
     liquibaseRuntime(libs.logback.core)
     liquibaseRuntime(libs.logback.classic)
 }
+
+val integrationTest by sourceSets.creating {
+    java {
+        srcDir("src/integrationTest/java")
+    }
+    resources {
+        srcDir("src/integrationTest/resources")
+    }
+
+    // Let the integrationTest classpath include the main and test outputs
+    compileClasspath += sourceSets["main"].output + sourceSets["test"].output
+    runtimeClasspath += sourceSets["main"].output + sourceSets["test"].output
+}
+
+val integrationTestImplementation by configurations.getting {
+    extendsFrom(configurations["testImplementation"])
+}
+val integrationTestRuntimeOnly by configurations.getting {
+    extendsFrom(configurations["testRuntimeOnly"])
+}
+
 
 tasks.spotbugsMain {
     reports.create("html") {
@@ -160,3 +184,26 @@ tasks.named<Test>("test") {
     systemProperty("spring.datasource.driver-class-name", "org.postgresql.Driver")
     systemProperty("spring.jpa.database-platform", "org.hibernate.dialect.PostgreSQLDialect")
 }
+
+tasks.register<Test>("integrationTest") {
+    description = "Runs the integration tests."
+    group = "verification"
+
+    testClassesDirs = integrationTest.output.classesDirs
+    classpath = integrationTest.runtimeClasspath
+
+    shouldRunAfter(tasks.test)
+    environment("DOCKER_HOST", "unix:///var/run/docker.sock")
+    environment("TESTCONTAINERS_RYUK_DISABLED", "true")
+    environment("DOCKER_API_VERSION", "1.44")
+    jvmArgs(
+        "-Ddocker.client.strategy=org.testcontainers.dockerclient.UnixSocketClientProviderStrategy",
+        "-DDOCKER_API_VERSION=1.44"
+    )
+}
+
+
+tasks.check {
+    dependsOn("integrationTest")
+}
+
