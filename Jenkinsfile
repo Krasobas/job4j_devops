@@ -65,19 +65,11 @@ pipeline {
     }
 
     post {
-
         always {
-
             script {
-
                 def status = currentBuild.currentResult
-
                 def emoji = status == 'SUCCESS' ? '✅' : status == 'FAILURE' ? '❌' : '⚠️'
-
                 def duration = currentBuild.durationString.replace(' and counting', '')
-
-
-
                 def buildInfo = """
 ${emoji} *${env.JOB_NAME}* — #${currentBuild.number}
 ━━━━━━━━━━━━━━━━━━━━
@@ -87,15 +79,9 @@ ${emoji} *${env.JOB_NAME}* — #${currentBuild.number}
 ━━━━━━━━━━━━━━━━━━━━
 🔗 [Open in Jenkins](${env.BUILD_URL})
                 """.trim()
-
-
-
                 telegramSend(message: buildInfo)
-
             }
-
         }
-
     }
 
 }
