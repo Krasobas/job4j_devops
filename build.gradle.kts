@@ -22,9 +22,9 @@ liquibase {
     activities.register("main") {
         this.arguments = mapOf(
             "logLevel"      to "info",
-            "url"           to env.SPRING_DATASOURCE_URL.value,
-            "username"      to env.SPRING_DATASOURCE_USERNAME.value,
-            "password"      to env.SPRING_DATASOURCE_PASSWORD.value,
+            "url"           to env.JOB4J_DEVOPS_DB_URL.value,
+            "username"      to env.DB_USERNAME.value,
+            "password"      to env.DB_PASSWORD.value,
             "changelogFile" to "src/main/resources/db/changelog/db.changelog-master.xml"
         )
     }
@@ -149,6 +149,12 @@ tasks.register<Zip>("archiveResources") {
 
 tasks.register("profile") {
     doFirst {
-        println(env.SPRING_DATASOURCE_URL.value)
+        println(env.JOB4J_DEVOPS_DB_URL.value)
     }
+}
+
+tasks.named<Test>("test") {
+    systemProperty("spring.datasource.url", env.JOB4J_DEVOPS_DB_URL.value)
+    systemProperty("spring.datasource.username", env.DB_USERNAME.value)
+    systemProperty("spring.datasource.password", env.DB_PASSWORD.value)
 }

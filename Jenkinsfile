@@ -16,9 +16,21 @@ pipeline {
                 sh './gradlew check'
             }
         }
-        stage('Build') {
+        stage('Validate Migrations') {
             steps {
-                sh './gradlew build'
+                sh './gradlew validate -P"dotenv.filename"="/var/env/.env.develop"'
+            }
+        }
+
+        stage('Update DB') {
+            steps {
+                sh './gradlew update -P"dotenv.filename"="/var/env/.env.develop"'
+            }
+        }
+
+        stage('Build & Test') {
+            steps {
+                sh './gradlew check -P"dotenv.filename"="/var/env/.env.develop"'
             }
         }
         stage('JaCoCo') {
