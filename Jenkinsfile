@@ -68,43 +68,55 @@ pipeline {
     }
 
     post {
-    success {
-        script {
-            def message = """
-✅ Build Success!
----------------------------
-🚀 Project: ${env.JOB_NAME}
-🔢 Build: #${env.BUILD_NUMBER}
-⏱️ Duration: ${currentBuild.durationString}
-📅 Finished: ${new Date().format('yyyy-MM-dd HH:mm:ss')}
-🔗 URL: ${env.BUILD_URL}
----------------------------
-            """.trim()
-            telegramSend(message: message)
+        success {
+            script {
+                def message = """
+    ✅ Build Success!
+    ---------------------------
+    🚀 Project: ${env.JOB_NAME}
+    🔢 Build: #${env.BUILD_NUMBER}
+    ⏱️ Duration: ${currentBuild.durationString}
+    📅 Finished: ${new Date().format('yyyy-MM-dd HH:mm:ss')}
+    🔗 URL: ${env.BUILD_URL}
+    ---------------------------
+                """.trim()
+                telegramSend(message: message)
+            }
         }
-    }
 
-    failure {
-        script {
-            def message = """
-❌ Build Failed!
----------------------------
-⚠️ Project: ${env.JOB_NAME}
-🔢 Build: #${env.BUILD_NUMBER}
-🔻 Status: ${currentBuild.currentResult}
-⏱️ Duration: ${currentBuild.durationString}
-🔍 Logs: ${env.BUILD_URL}console
----------------------------
-            """.trim()
-            telegramSend(message: message)
+        failure {
+            script {
+                def message = """
+    ❌ Build Failed!
+    ---------------------------
+    ⚠️ Project: ${env.JOB_NAME}
+    🔢 Build: #${env.BUILD_NUMBER}
+    🔻 Status: ${currentBuild.currentResult}
+    ⏱️ Duration: ${currentBuild.durationString}
+    🔍 Logs: ${env.BUILD_URL}console
+    ---------------------------
+                """.trim()
+                telegramSend(message: message)
+            }
         }
-    }
 
-    unstable {
-        script {
-            def message = "⚠️ Build Unstable: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
-            telegramSend(message: message)
+        unstable {
+            script {
+                def message = "⚠️ Build Unstable: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                telegramSend(message: message)
+            }
+        }
+
+        always {
+            script {
+                def buildInfo = """
+    Build: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+    Status: ${currentBuild.currentResult}
+    Time: ${new Date(currentBuild.startTimeInMillis).format('yyyy-MM-dd HH:mm')}
+    Duration: ${currentBuild.durationString}
+                """.trim()
+                telegramSend(message: buildInfo)
+            }
         }
     }
-}
 }
