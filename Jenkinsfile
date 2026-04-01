@@ -68,13 +68,41 @@ pipeline {
     }
 
     post {
-        always {
+        success {
             script {
-                def buildInfo = "Build number: ${currentBuild.number}\n" +
-                                "Build status: ${currentBuild.currentResult}\n" +
-                                "Started at: ${new Date(currentBuild.startTimeInMillis)}\n" +
-                                "Duration so far: ${currentBuild.durationString}"
-                telegramSend(message: buildInfo)
+                def message = """
+    ✅ *Build Success!*
+    ---------------------------
+    🚀 *Project:* ${env.JOB_NAME}
+    🔢 *Build:* #${env.BUILD_NUMBER}
+    ⏱️ *Duration:* ${currentBuild.durationString}
+    📅 *Finished:* ${new Date().format('yyyy-MM-dd HH:mm:ss')}
+    🔗 [Open Build](${env.BUILD_URL})
+    ---------------------------
+                """.trim()
+                telegramSend(message: message, parseMode: 'Markdown')
+            }
+        }
+
+        failure {
+            script {
+                def message = """
+    ❌ *Build Failed!*
+    ---------------------------
+    ⚠️ *Project:* ${env.JOB_NAME}
+    🔢 *Build:* #${env.BUILD_NUMBER}
+    🔻 *Status:* ${currentBuild.currentResult}
+    ⏱️ *Duration:* ${currentBuild.durationString}
+    🔍 *Check logs here:* [Console Output](${env.BUILD_URL}console)
+    ---------------------------
+                """.trim()
+                telegramSend(message: message, parseMode: 'Markdown')
+            }
+        }
+
+        unstable {
+            script {
+                telegramSend(message: "⚠️ *Build Unstable:* ${env.JOB_NAME} #${env.BUILD_NUMBER}", parseMode: 'Markdown')
             }
         }
     }
