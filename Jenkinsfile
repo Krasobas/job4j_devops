@@ -65,14 +65,40 @@ pipeline {
     }
 
     post {
-        success {
+        always {
             script {
-                telegramSend(message: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}")
-            }
-        }
-        failure {
-            script {
-                telegramSend(message: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}\nLogs: ${env.BUILD_URL}console")
+                // Извлекаем автора и сообщение последнего коммита
+                def changeLogSets = currentBuild.changeSets
+                def commitInfo = "No changes"
+                if (!changeLogSets.isEmpty()) {
+                    def entry = changeLogSets[0].items[0]
+                    commitInfo = "${entry.msg} [by ${entry.author.fullName}]"
+                }
+
+                // Выбираем иконку статуса
+                def statusIcon = (currentBuild.currentResult == 'SUCCESS') ? "✅" : "❌"
+                def statusText = (currentBuild.currentResult == 'SUCCESS') ? "SUCCESS" : "FAILED"
+
+                // Формируем детальное сообщение
+                def msg = """
+${statusIcon} BUILD ${statusText}
+---------------------------
+🚀 Project: ${env.JOB_NAME}
+🔢 Build: #${env.BUILD_NUMBER}
+📝 Commit: ${commitInfo}
+⏱️ Duration: ${currentBuild.durationString}
+📅 Time: ${new Date().format('yyyy-MM-dd HH:mm:ss')}
+---------------------------
+🔗 Link: ${env.BUILD_URL}
+🔍 Logs: ${env.BUILD_URL}console
+---------------------------
+                """.trim()
+
+                try {
+                    telegramSend(message: msg)
+                } catch (Exception e) {
+                    echo "Telegram notification failed: ${e.message}"
+                }
             }
         }
     }

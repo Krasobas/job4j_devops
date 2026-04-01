@@ -157,4 +157,6 @@ tasks.named<Test>("test") {
     systemProperty("spring.datasource.url", env.JOB4J_DEVOPS_DB_URL.value)
     systemProperty("spring.datasource.username", env.DB_USERNAME.value)
     systemProperty("spring.datasource.password", env.DB_PASSWORD.value)
+    systemProperty("spring.datasource.driver-class-name", "org.postgresql.Driver")
+    systemProperty("spring.jpa.database-platform", "org.hibernate.dialect.PostgreSQLDialect")
 }
