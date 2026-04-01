@@ -45,14 +45,22 @@ pipeline {
     }
 
     post {
-            always {
-                script {
-                    def buildInfo = "Build number: ${currentBuild.number}\n" +
-                                    "Build status: ${currentBuild.currentResult}\n" +
-                                    "Started at: ${new Date(currentBuild.startTimeInMillis)}\n" +
-                                    "Duration so far: ${currentBuild.durationString}"
-                    telegramSend(message: buildInfo)
-                }
+        always {
+            script {
+                def buildStatus = currentBuild.currentResult ?: "FINISHED"
+
+                def buildInfo = "=== BUILD " + buildStatus + " ===\n" +
+                                "Project: " + env.JOB_NAME + "\n" +
+                                "Number:  #" + env.BUILD_NUMBER + "\n" +
+                                "----------------------------\n" +
+                                "Started:  " + new Date(currentBuild.startTimeInMillis) + "\n" +
+                                "Duration: " + currentBuild.durationString + "\n" +
+                                "----------------------------\n" +
+                                "Link: " + env.BUILD_URL + "\n" +
+                                "Console: " + env.BUILD_URL + "console"
+
+                telegramSend(message: buildInfo)
             }
         }
+    }
 }
