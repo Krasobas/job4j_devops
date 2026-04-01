@@ -47,21 +47,18 @@ pipeline {
     post {
         always {
             script {
-                def status = (currentBuild.currentResult ?: 'UNKNOWN')
-                def icon = (status == 'SUCCESS') ? "✅" : "❌"
+                def icon = (currentBuild.currentResult == 'SUCCESS') ? "✅" : "❌"
 
-                def msg = icon + " Build " + status + ": " + env.JOB_NAME + " #" + env.BUILD_NUMBER + "\n"
-                msg += "⏱ Duration: " + currentBuild.durationString + "\n"
-                msg += "🔗 URL: " + env.BUILD_URL + "\n"
-                msg += "🔍 Logs: " + env.BUILD_URL + "console"
+                def buildInfo = icon + " *BUILD " + currentBuild.currentResult + "*\n" +
+                                "----------------------------\n" +
+                                "🚀 *Project:* " + env.JOB_NAME + "\n" +
+                                "🔢 *Number:* #" + env.BUILD_NUMBER + "\n" +
+                                "⏱ *Duration:* " + currentBuild.durationString + "\n" +
+                                "📅 *Finished:* " + new Date().format('yyyy-MM-dd HH:mm:ss') + "\n" +
+                                "----------------------------\n" +
+                                "🔗 [Open Build](" + env.BUILD_URL + ")"
 
-                try {
-                    echo "Sending Telegram message..."
-                    telegramSend(message: msg)
-                    echo "Telegram sent successfully"
-                } catch (Exception e) {
-                    echo "ERROR sending telegram: " + e.toString()
-                }
+                telegramSend(message: buildInfo)
             }
         }
     }
