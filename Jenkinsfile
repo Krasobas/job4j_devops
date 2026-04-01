@@ -82,9 +82,7 @@ pipeline {
 ${emoji} *${env.JOB_NAME}* — #${currentBuild.number}
 ━━━━━━━━━━━━━━━━━━━━
 📌 Status: *${status}*
-
 🕐 Started: ${new Date(currentBuild.startTimeInMillis).format('dd.MM.yyyy HH:mm:ss')}
-
 ⏱ Duration: ${duration}
 ━━━━━━━━━━━━━━━━━━━━
 🔗 [Open in Jenkins](${env.BUILD_URL})
