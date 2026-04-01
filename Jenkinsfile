@@ -80,19 +80,19 @@ pipeline {
 
                 def buildInfo = """
 
-                ${emoji} *${env.JOB_NAME}* — #${currentBuild.number}
+${emoji} *${env.JOB_NAME}* — #${currentBuild.number}
 
-                ━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━
 
-                📌 Status: *${status}*
+📌 Status: *${status}*
 
-                🕐 Started: ${new Date(currentBuild.startTimeInMillis).format('dd.MM.yyyy HH:mm:ss')}
+🕐 Started: ${new Date(currentBuild.startTimeInMillis).format('dd.MM.yyyy HH:mm:ss')}
 
-                ⏱ Duration: ${duration}
+⏱ Duration: ${duration}
 
-                ━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━
 
-                🔗 [Open in Jenkins](${env.BUILD_URL})
+🔗 [Open in Jenkins](${env.BUILD_URL})
 
                 """.trim()
 
