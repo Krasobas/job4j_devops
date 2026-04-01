@@ -19,7 +19,7 @@ pipeline {
 
         stage('Check & Test') {
             steps {
-                sh "./gradlew check -P\"dotenv.filename\"=\"${ENV_PATH}\""
+                sh "./gradlew check -P\"dotenv.filename\"=\"${ENV_PATH}\" --info"
             }
         }
 
@@ -52,17 +52,14 @@ pipeline {
                         docker push ${DOCKER_USER}/job4j_devops:latest
                         docker logout
                     """
+
+                    sh """
+                        docker images "${DOCKER_USER}/job4j_devops" --format "{{.Repository}}:{{.Tag}}" | \
+                        grep -v ":latest" | \
+                        grep -v ":${BUILD_NUMBER}" | \
+                        xargs -r docker rmi || true
+                    """
                 }
-            }
-        }
-        stage('Cleanup Old Images') {
-            steps {
-                sh '''
-                    docker images "${DOCKER_USER}/job4j_devops" --format "{{.Repository}}:{{.Tag}}" | \
-                    grep -v ":latest" | \
-                    grep -v ":${BUILD_NUMBER}" | \
-                    xargs -r docker rmi || true
-                '''
             }
         }
     }
@@ -70,52 +67,12 @@ pipeline {
     post {
         success {
             script {
-                def message = """
-    ✅ Build Success!
-    ---------------------------
-    🚀 Project: ${env.JOB_NAME}
-    🔢 Build: #${env.BUILD_NUMBER}
-    ⏱️ Duration: ${currentBuild.durationString}
-    📅 Finished: ${new Date().format('yyyy-MM-dd HH:mm:ss')}
-    🔗 URL: ${env.BUILD_URL}
-    ---------------------------
-                """.trim()
-                telegramSend(message: message)
+                telegramSend(message: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}")
             }
         }
-
         failure {
             script {
-                def message = """
-    ❌ Build Failed!
-    ---------------------------
-    ⚠️ Project: ${env.JOB_NAME}
-    🔢 Build: #${env.BUILD_NUMBER}
-    🔻 Status: ${currentBuild.currentResult}
-    ⏱️ Duration: ${currentBuild.durationString}
-    🔍 Logs: ${env.BUILD_URL}console
-    ---------------------------
-                """.trim()
-                telegramSend(message: message)
-            }
-        }
-
-        unstable {
-            script {
-                def message = "⚠️ Build Unstable: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
-                telegramSend(message: message)
-            }
-        }
-
-        always {
-            script {
-                def buildInfo = """
-    Build: ${env.JOB_NAME} #${env.BUILD_NUMBER}
-    Status: ${currentBuild.currentResult}
-    Time: ${new Date(currentBuild.startTimeInMillis).format('yyyy-MM-dd HH:mm')}
-    Duration: ${currentBuild.durationString}
-                """.trim()
-                telegramSend(message: buildInfo)
+                telegramSend(message: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}\nLogs: ${env.BUILD_URL}console")
             }
         }
     }
