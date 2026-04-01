@@ -65,41 +65,45 @@ pipeline {
     }
 
     post {
+
         always {
+
             script {
-                // Извлекаем автора и сообщение последнего коммита
-                def changeLogSets = currentBuild.changeSets
-                def commitInfo = "No changes"
-                if (!changeLogSets.isEmpty()) {
-                    def entry = changeLogSets[0].items[0]
-                    commitInfo = "${entry.msg} [by ${entry.author.fullName}]"
-                }
 
-                // Выбираем иконку статуса
-                def statusIcon = (currentBuild.currentResult == 'SUCCESS') ? "✅" : "❌"
-                def statusText = (currentBuild.currentResult == 'SUCCESS') ? "SUCCESS" : "FAILED"
+                def status = currentBuild.currentResult
 
-                // Формируем детальное сообщение
-                def msg = """
-${statusIcon} BUILD ${statusText}
----------------------------
-🚀 Project: ${env.JOB_NAME}
-🔢 Build: #${env.BUILD_NUMBER}
-📝 Commit: ${commitInfo}
-⏱️ Duration: ${currentBuild.durationString}
-📅 Time: ${new Date().format('yyyy-MM-dd HH:mm:ss')}
----------------------------
-🔗 Link: ${env.BUILD_URL}
-🔍 Logs: ${env.BUILD_URL}console
----------------------------
+                def emoji = status == 'SUCCESS' ? '✅' : status == 'FAILURE' ? '❌' : '⚠️'
+
+                def duration = currentBuild.durationString.replace(' and counting', '')
+
+
+
+                def buildInfo = """
+
+                ${emoji} *${env.JOB_NAME}* — #${currentBuild.number}
+
+                ━━━━━━━━━━━━━━━━━━━━
+
+                📌 Status: *${status}*
+
+                🕐 Started: ${new Date(currentBuild.startTimeInMillis).format('dd.MM.yyyy HH:mm:ss')}
+
+                ⏱ Duration: ${duration}
+
+                ━━━━━━━━━━━━━━━━━━━━
+
+                🔗 [Open in Jenkins](${env.BUILD_URL})
+
                 """.trim()
 
-                try {
-                    telegramSend(message: msg)
-                } catch (Exception e) {
-                    echo "Telegram notification failed: ${e.message}"
-                }
+
+
+                telegramSend(message: buildInfo)
+
             }
+
         }
+
     }
+
 }
