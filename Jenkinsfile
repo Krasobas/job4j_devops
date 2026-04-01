@@ -45,21 +45,14 @@ pipeline {
     }
 
     post {
-        always {
-            script {
-                def icon = (currentBuild.currentResult == 'SUCCESS') ? "✅" : "❌"
-
-                def buildInfo = icon + " *BUILD " + currentBuild.currentResult + "*\n" +
-                                "----------------------------\n" +
-                                "🚀 *Project:* " + env.JOB_NAME + "\n" +
-                                "🔢 *Number:* #" + env.BUILD_NUMBER + "\n" +
-                                "⏱ *Duration:* " + currentBuild.durationString + "\n" +
-                                "📅 *Finished:* " + new Date().format('yyyy-MM-dd HH:mm:ss') + "\n" +
-                                "----------------------------\n" +
-                                "🔗 [Open Build](" + env.BUILD_URL + ")"
-
-                telegramSend(message: buildInfo)
+            always {
+                script {
+                    def buildInfo = "Build number: ${currentBuild.number}\n" +
+                                    "Build status: ${currentBuild.currentResult}\n" +
+                                    "Started at: ${new Date(currentBuild.startTimeInMillis)}\n" +
+                                    "Duration so far: ${currentBuild.durationString}"
+                    telegramSend(message: buildInfo)
+                }
             }
         }
-    }
 }
