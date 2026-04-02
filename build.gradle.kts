@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.postgresql)
     implementation(libs.liquibase.core)
+    implementation("org.springframework.kafka:spring-kafka")
 
     // Test dependencies
     testImplementation(libs.spring.boot.starter.test)
@@ -78,6 +79,8 @@ dependencies {
 
     testImplementation("org.testcontainers:testcontainers:2.0.4")
     testImplementation("org.testcontainers:postgresql:1.21.4")
+    testImplementation("org.awaitility:awaitility")
+    testImplementation("org.testcontainers:kafka:1.21.4")
 
     // Liquibase Runtime unified via libs
     liquibaseRuntime(libs.liquibase.core)
