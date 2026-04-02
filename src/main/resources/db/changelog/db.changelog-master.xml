@@ -17,4 +17,7 @@
     <include file="changeset/004_ddl_alter_users_id_to_bigint.sql"
              author="Krasobas"
              relativeToChangelogFile="true"/>
+    <include file="changeset/005_ddl_create_calc_events_table.sql"
+             author="Krasobas"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>
