@@ -1,7 +1,8 @@
 --liquibase formatted sql
 --changeset krasobas:create_calc_events_table
+--validCheckSum: ANY
 CREATE TABLE IF NOT EXISTS calc_events (
-    id BIG SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     user_id BIGINT,
     first BIGINT,
     second BIGINT,

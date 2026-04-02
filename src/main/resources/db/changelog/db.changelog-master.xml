@@ -20,10 +20,4 @@
     <include file="changeset/005_ddl_create_calc_events_table.sql"
              author="Krasobas"
              relativeToChangelogFile="true"/>
-    <include file="changeset/006_alter_id_type_to_bigint.sql"
-             author="Krasobas"
-             relativeToChangelogFile="true"/>
-    <include file="changeset/007_alter_id_type_to_bigserial.sql"
-             author="Krasobas"
-             relativeToChangelogFile="true"/>
 </databaseChangeLog>
