@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-class TestContainersTest {
+class TestContainersIT {
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
         "postgres:16-alpine"
     );

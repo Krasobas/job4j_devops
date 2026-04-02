@@ -14,4 +14,7 @@
     <include file="changeset/003_ddl_alter_add_user_create_date.sql"
              author="Krasobas"
              relativeToChangelogFile="true"/>
+    <include file="changeset/004_ddl_alter_users_id_to_bigint.sql"
+             author="Krasobas"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>
