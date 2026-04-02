@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class CalcServiceIT {
-    private static PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>(
+    private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>(
         "postgres:16-alpine"
     ).withReuse(true);
 
