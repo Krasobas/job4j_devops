@@ -14,12 +14,12 @@ public class CalcEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name="user_id")
+    @Column(name = "user_id")
     private Long userId;
     private Long first;
     private Long second;
     private Long result;
-    @Column(name="create_date")
+    @Column(name = "create_date")
     private LocalDateTime createDate;
     private String type;
 }

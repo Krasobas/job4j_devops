@@ -6,24 +6,24 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 class TestContainersIT {
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+    private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>(
         "postgres:16-alpine"
     );
 
     @BeforeAll
     static void beforeAll() {
-        postgres.start();
+        POSTGRES.start();
     }
 
     @AfterAll
     static void afterAll() {
-        postgres.stop();
+        POSTGRES.stop();
     }
 
     @Test
     public void whenSaveUser() {
-        System.out.println(postgres.getJdbcUrl());
-        System.out.println(postgres.getUsername());
-        System.out.println(postgres.getPassword());
+        System.out.println(POSTGRES.getJdbcUrl());
+        System.out.println(POSTGRES.getUsername());
+        System.out.println(POSTGRES.getPassword());
     }
 }

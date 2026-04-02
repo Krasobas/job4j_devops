@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class UserRepositoryIT {
-    private static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+    private static PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>(
         "postgres:16-alpine"
     ).withReuse(true);
 
@@ -23,9 +23,9 @@ class UserRepositoryIT {
 
     @DynamicPropertySource
     public static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
+        registry.add("spring.datasource.username", POSTGRES::getUsername);
+        registry.add("spring.datasource.password", POSTGRES::getPassword);
 
         /* Force Liquibase to find the changelog in the main resources */
         registry.add("spring.liquibase.change-log", () -> "classpath:db/changelog/db.changelog-master.xml");
@@ -37,12 +37,12 @@ class UserRepositoryIT {
 
     @BeforeAll
     static void beforeAll() {
-        postgres.start();
+        POSTGRES.start();
     }
 
     @AfterAll
     static void afterAll() {
-        postgres.stop();
+        POSTGRES.stop();
     }
 
     @Test
