@@ -43,10 +43,16 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
+                    sh "mkdir -p env"
+                    sh "cp ${ENV_PATH} ./env/ci.env"
                     sh """
-                        docker build -f config/jenkins/Dockerfile -t ${DOCKER_USER}/job4j_devops:${BUILD_NUMBER} .
+                        docker build \
+                            --build-arg DOTENV_PATH="./env/ci.env" \
+                            -f config/jenkins/Dockerfile \
+                            -t ${DOCKER_USER}/job4j_devops:${BUILD_NUMBER} .
+                    """
+                    sh """
                         docker tag ${DOCKER_USER}/job4j_devops:${BUILD_NUMBER} ${DOCKER_USER}/job4j_devops:latest
-
                         echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
                         docker push ${DOCKER_USER}/job4j_devops:${BUILD_NUMBER}
                         docker push ${DOCKER_USER}/job4j_devops:latest

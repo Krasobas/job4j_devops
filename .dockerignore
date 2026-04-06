@@ -7,3 +7,4 @@
 !gradle.properties
 !gradle/libs.versions.toml
 !build/libs/*.jar
+!env
