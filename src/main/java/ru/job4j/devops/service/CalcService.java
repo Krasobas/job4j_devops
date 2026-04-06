@@ -1,6 +1,7 @@
 package ru.job4j.devops.service;
 
-import lombok.AllArgsConstructor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.job4j.devops.models.CalcEvent;
@@ -10,10 +11,14 @@ import ru.job4j.devops.repository.CalcEventRepository;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@SuppressFBWarnings(
+    value = "EI_EXPOSE_REP2",
+    justification = "KafkaTemplate is a Spring-managed bean, not an external mutable object"
+)
+@RequiredArgsConstructor
 public class CalcService {
-    private CalcEventRepository calcEventRepository;
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private final CalcEventRepository calcEventRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void add(User user, long first, long second) {
         long result = first + second;

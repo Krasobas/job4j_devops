@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.liquibase.core)
     implementation("org.springframework.kafka:spring-kafka")
+    implementation("com.github.spotbugs:spotbugs-annotations:4.9.8")
 
     // Test dependencies
     testImplementation(libs.spring.boot.starter.test)
