@@ -1,42 +1,35 @@
 package ru.job4j.devops.controllers;
 
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.devops.models.Result;
 import ru.job4j.devops.models.TwoArgs;
+import ru.job4j.devops.service.ResultService;
 
-/**
- * Calculation controller
- */
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("calc")
+@AllArgsConstructor
 public class CalcController {
-    /**
-     * Default constructor
-     */
-    public CalcController() {
-    }
+    private final ResultService resultService;
 
-    /**
-     * Summarise
-     * @param twoArgs - an object with two args
-     * @return ok
-     */
     @PostMapping("summarise")
     public ResponseEntity<Result> summarise(@RequestBody TwoArgs twoArgs) {
-        var result = twoArgs.getFirst() + twoArgs.getSecond();
-        return ResponseEntity.ok(new Result(result));
+        var result = new Result();
+        result.setFirstArg(twoArgs.getFirst());
+        result.setSecondArg(twoArgs.getSecond());
+        result.setResult(twoArgs.getFirst() + twoArgs.getSecond());
+        result.setOperation("+");
+        result.setCreateDate(LocalDate.now());
+        resultService.save(result);
+        return ResponseEntity.ok(result);
     }
 
-    /**
-     * Times
-     * @param twoArgs - an object with two args
-     * @return ok
-     */
-    @PostMapping("times")
-    public ResponseEntity<Result> times(@RequestBody TwoArgs twoArgs) {
-        var result = twoArgs.getFirst() * twoArgs.getSecond();
-        return ResponseEntity.ok(new Result(result));
+    @GetMapping("/")
+    public ResponseEntity<List<Result>> logs() {
+        return ResponseEntity.ok(resultService.findAll());
     }
 }

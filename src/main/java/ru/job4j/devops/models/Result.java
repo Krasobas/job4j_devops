@@ -1,27 +1,35 @@
 package ru.job4j.devops.models;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-/**
- * Result object
- */
+import java.time.LocalDate;
+
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity(name = "results")
 public class Result {
-    private double value;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    private Long id;
 
-    /**
-     * Default constructor
-     */
-    public Result() {
-    }
+    @Column(name = "first_arg")
+    private Double firstArg;
 
-    /**
-     * Constructor with value
-     * @param value to set
-     */
-    public Result(double value) {
-        this.value = value;
-    }
+    @Column(name = "second_arg")
+    private Double secondArg;
+
+    @Column(name = "result")
+    private Double result;
+
+    @Column(name = "create_date")
+    private LocalDate createDate;
+
+    private String operation;
 }

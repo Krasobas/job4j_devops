@@ -20,4 +20,8 @@
     <include file="changeset/005_ddl_create_calc_events_table.sql"
              author="Krasobas"
              relativeToChangelogFile="true"/>
+    <include file="changeset/006_ddl_create_result.sql"
+             author="Krasobas"
+             relativeToChangelogFile="true"/>
+
 </databaseChangeLog>
