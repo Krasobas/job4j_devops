@@ -19,7 +19,7 @@ pipeline {
 
         stage('Check & Test') {
             steps {
-                sh "./gradlew check -P\"dotenv.filename\"=\"${ENV_PATH}\" --info"
+                sh "./gradlew clean check assemble -P\"dotenv.filename\"=\"${ENV_PATH}\" --info"
             }
         }
 
@@ -43,28 +43,37 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    sh "mkdir -p env"
-                    sh "cp ${ENV_PATH} ./env/ci.env"
-                    sh """
-                        docker build \
-                            --build-arg DOTENV_PATH="./env/ci.env" \
-                            -f config/jenkins/Dockerfile \
-                            -t ${DOCKER_USER}/job4j_devops:${BUILD_NUMBER} .
-                    """
-                    sh """
-                        docker tag ${DOCKER_USER}/job4j_devops:${BUILD_NUMBER} ${DOCKER_USER}/job4j_devops:latest
-                        echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
-                        docker push ${DOCKER_USER}/job4j_devops:${BUILD_NUMBER}
-                        docker push ${DOCKER_USER}/job4j_devops:latest
-                        docker logout
-                    """
+                    script {
+                        sh "test -f build/libs/*.jar || (echo 'ERROR: JAR file not found in build/libs! Run assemble first.'; exit 1)"
 
-                    sh """
-                        docker images "${DOCKER_USER}/job4j_devops" --format "{{.Repository}}:{{.Tag}}" | \
-                        grep -v ":latest" | \
-                        grep -v ":${BUILD_NUMBER}" | \
-                        xargs -r docker rmi || true
-                    """
+                        sh "mkdir -p env"
+                        sh "cp ${env.ENV_PATH} ./env/ci.env"
+
+                        sh """
+                            docker build --no-cache --pull \
+                                --build-arg DOTENV_PATH="./env/ci.env" \
+                                -f config/jenkins/Dockerfile \
+                                -t ${DOCKER_USER}/job4j_devops:${BUILD_NUMBER} .
+                        """
+
+                        sh """
+                            echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+
+                            docker tag ${DOCKER_USER}/job4j_devops:${BUILD_NUMBER} ${DOCKER_USER}/job4j_devops:latest
+
+                            docker push ${DOCKER_USER}/job4j_devops:${BUILD_NUMBER}
+                            docker push ${DOCKER_USER}/job4j_devops:latest
+
+                            docker logout
+                        """
+
+                        sh """
+                            docker images "${DOCKER_USER}/job4j_devops" --format "{{.Repository}}:{{.Tag}}" | \
+                            grep -v ":latest" | \
+                            grep -v ":${BUILD_NUMBER}" | \
+                            xargs -r docker rmi || true
+                        """
+                    }
                 }
             }
         }

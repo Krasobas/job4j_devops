@@ -27,6 +27,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    ports:
+      - "9988:8081"
     environment:
       SERVER_PORT: 8081
       SPRING_DATASOURCE_URL: jdbc:postgresql://job4j_devops_db:5432/job4j_devops
