@@ -8,6 +8,7 @@ import ru.job4j.devops.models.TwoArgs;
 import ru.job4j.devops.service.ResultService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,7 +24,7 @@ public class CalcController {
         result.setSecondArg(twoArgs.getSecond());
         result.setResult(twoArgs.getFirst() + twoArgs.getSecond());
         result.setOperation("+");
-        result.setCreateDate(LocalDate.now());
+        result.setCreateDate(LocalDateTime.now());
         resultService.save(result);
         return ResponseEntity.ok(result);
     }

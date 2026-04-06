@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -17,19 +17,19 @@ public class Result {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long id;
+    private Integer id;
 
-    @Column(name = "first_arg")
-    private Double firstArg;
+    @Column(name = "first_arg", columnDefinition = "numeric")
+    private double firstArg;
 
-    @Column(name = "second_arg")
-    private Double secondArg;
+    @Column(name = "second_arg", columnDefinition = "numeric")
+    private double secondArg;
 
-    @Column(name = "result")
+    @Column(name = "result", columnDefinition = "numeric")
     private Double result;
 
     @Column(name = "create_date")
-    private LocalDate createDate;
+    private LocalDateTime createDate;
 
     private String operation;
 }
