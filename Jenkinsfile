@@ -44,7 +44,7 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     script {
-                        sh "test -f build/libs/*.jar || (echo 'ERROR: JAR file not found in build/libs! Run assemble first.'; exit 1)"
+                        sh 'find build/libs/ -name "*.jar" | grep -q "." || (echo "ERROR: JAR file not found in build/libs! Run assemble first."; exit 1)'
 
                         sh "mkdir -p env"
                         sh "cp ${env.ENV_PATH} ./env/ci.env"
