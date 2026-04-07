@@ -1,7 +1,7 @@
 --liquibase formatted sql
 --changeset krasobas:create_result
 
-CREATE TABLE results (
+CREATE TABLE IF NOT EXISTS results (
     id SERIAL PRIMARY KEY,
     first_arg DECIMAL,
     second_arg DECIMAL,
