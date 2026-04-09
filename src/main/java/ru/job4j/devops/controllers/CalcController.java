@@ -8,7 +8,7 @@ import ru.job4j.devops.models.Result;
 import ru.job4j.devops.models.TwoArgs;
 import ru.job4j.devops.service.ResultService;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Log4j2
@@ -26,7 +26,7 @@ public class CalcController {
         result.setSecondArg(twoArgs.getSecond());
         result.setResult(twoArgs.getFirst() + twoArgs.getSecond());
         result.setOperation("+");
-        result.setCreateDate(LocalDateTime.now());
+        result.setCreateDate(OffsetDateTime.now());
         resultService.save(result);
         return ResponseEntity.ok(result);
     }

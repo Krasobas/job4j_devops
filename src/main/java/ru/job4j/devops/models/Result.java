@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class Result {
     private Double result;
 
     @Column(name = "create_date")
-    private LocalDateTime createDate;
+    private OffsetDateTime createDate;
 
     private String operation;
 }
