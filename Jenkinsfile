@@ -91,6 +91,7 @@ pipeline {
                             script: 'git describe --tags --exact-match',
                             returnStdout: true
                         ).trim()
+                        env.PROJECT_VERSION = env.GIT_TAG.replaceAll('^v', '')
                         echo "Найден тег: ${env.GIT_TAG}. Публикация будет выполнена."
                     } else {
                         env.GIT_TAG = ""
@@ -111,6 +112,7 @@ pipeline {
                     passwordVariable: 'NEXUS_PASS'
                 )]) {
                     sh """
+                        PROJECT_VERSION=${env.PROJECT_VERSION} \
                         ./gradlew publish \
                             -P"dotenv.filename"="${ENV_PATH}" \
                             -PNEXUS_USERNAME=${NEXUS_USER} \

@@ -35,7 +35,7 @@ liquibase {
 }
 
 group = "ru.job4j.devops"
-version = "1.0.0"
+version = System.getenv("PROJECT_VERSION") ?: "1.0.0"
 
 tasks.jacocoTestCoverageVerification {
     violationRules {
