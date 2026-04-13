@@ -7,8 +7,11 @@ plugins {
     id("com.github.spotbugs") version "6.0.26"
     id("org.liquibase.gradle") version "3.1.0"
     id("co.uzzu.dotenv.gradle") version "4.0.0"
+    id("maven-publish")
 }
 
+// Нужен только для liquibase-core на build classpath — плагин не найдёт
+// liquibase.Scope без этого. Repos не нужны — берём из mavenCentral напрямую.
 buildscript {
     repositories {
         mavenCentral()
@@ -57,6 +60,14 @@ tasks.jacocoTestCoverageVerification {
 }
 
 repositories {
+    maven {
+        url = uri("${env.NEXUS_URL.value}/repository/maven-public/")
+        isAllowInsecureProtocol = true
+        credentials {
+            username = env.NEXUS_USERNAME.value
+            password = env.NEXUS_PASSWORD.value
+        }
+    }
     mavenCentral()
 }
 
@@ -100,7 +111,6 @@ val integrationTest by sourceSets.creating {
         srcDir("src/integrationTest/resources")
     }
 
-    // Let the integrationTest classpath include the main and test outputs
     compileClasspath += sourceSets["main"].output + sourceSets["test"].output
     runtimeClasspath += sourceSets["main"].output + sourceSets["test"].output
 }
@@ -111,7 +121,6 @@ val integrationTestImplementation by configurations.getting {
 val integrationTestRuntimeOnly by configurations.getting {
     extendsFrom(configurations["testRuntimeOnly"])
 }
-
 
 tasks.spotbugsMain {
     reports.create("html") {
@@ -206,8 +215,38 @@ tasks.register<Test>("integrationTest") {
     )
 }
 
-
 tasks.check {
     dependsOn("integrationTest")
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+
+            pom {
+                name.set("job4j DevOps")
+                description.set("job4j DevOps training project")
+                url.set("https://github.com/Krasobas/job4j_devops")
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            val isSnapshot = version.toString().endsWith("-SNAPSHOT")
+            url = if (isSnapshot) {
+                uri("${env.NEXUS_URL.value}/repository/maven-snapshots/")
+            } else {
+                uri("${env.NEXUS_URL.value}/repository/maven-releases/")
+            }
+
+            isAllowInsecureProtocol = true
+
+            credentials {
+                username = env.NEXUS_USERNAME.value
+                password = env.NEXUS_PASSWORD.value
+            }
+        }
+    }
+}

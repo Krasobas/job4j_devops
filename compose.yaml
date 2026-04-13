@@ -17,6 +17,19 @@ services:
       timeout: 3s
       retries: 5
 
+  pg_backup:
+    build: ./config/postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PG_HOST: postgres
+      PG_DATABASE: ${POSTGRES_DB}
+      PG_USER: ${POSTGRES_USER}
+      PG_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./backup:/backup
+
   job4j_devops:
     build:
       context: .
