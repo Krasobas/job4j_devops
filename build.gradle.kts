@@ -81,6 +81,8 @@ dependencies {
     implementation(libs.liquibase.core)
     implementation("org.springframework.kafka:spring-kafka")
     implementation("com.github.spotbugs:spotbugs-annotations:4.9.8")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
 
     // Test dependencies
     testImplementation(libs.spring.boot.starter.test)
