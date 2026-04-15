@@ -23,12 +23,6 @@ pipeline {
             }
         }
 
-        stage('Debug') {
-            steps {
-                sh 'ls -la build/libs/'
-            }
-        }
-
         stage('Database Operations') {
             steps {
                 sh "./gradlew validate -P\"dotenv.filename\"=\"${ENV_PATH}\""
