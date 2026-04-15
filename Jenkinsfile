@@ -87,6 +87,7 @@ pipeline {
             steps {
                 script {
                     def NEXUS_REGISTRY = "docker.nexus.krasobas.com"
+                    def dockerImage = ""
 
                     sh 'find build/libs/ -name "*.jar" | grep -q "." || (echo "ERROR: JAR not found"; exit 1)'
 
@@ -96,7 +97,6 @@ pipeline {
                             -t job4j_devops:${env.GIT_TAG} .
                     """
 
-                    // Nexus
                     withCredentials([usernamePassword(
                         credentialsId: 'nexus-creds',
                         usernameVariable: 'NEXUS_USER',
@@ -106,8 +106,8 @@ pipeline {
                             docker tag job4j_devops:${env.GIT_TAG} ${NEXUS_REGISTRY}/job4j_devops:${env.GIT_TAG}
                             docker tag job4j_devops:${env.GIT_TAG} ${NEXUS_REGISTRY}/job4j_devops:latest
 
-                            echo "${NEXUS_PASS}" | docker login ${NEXUS_REGISTRY} \
-                                -u "${NEXUS_USER}" --password-stdin
+                            echo "${env.NEXUS_PASS}" | docker login ${NEXUS_REGISTRY} \
+                                -u "${env.NEXUS_USER}" --password-stdin
 
                             docker push ${NEXUS_REGISTRY}/job4j_devops:${env.GIT_TAG}
                             docker push ${NEXUS_REGISTRY}/job4j_devops:latest
@@ -116,33 +116,33 @@ pipeline {
                         """
                     }
 
-                    // Docker Hub
                     withCredentials([usernamePassword(
                         credentialsId: 'dockerhub-creds',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_PASS'
                     )]) {
+                        dockerImage = "${env.DOCKER_USER}/job4j_devops"
+
                         sh """
-                            docker tag job4j_devops:${env.GIT_TAG} ${DOCKER_USER}/job4j_devops:${env.GIT_TAG}
-                            docker tag job4j_devops:${env.GIT_TAG} ${DOCKER_USER}/job4j_devops:latest
+                            docker tag job4j_devops:${env.GIT_TAG} ${dockerImage}:${env.GIT_TAG}
+                            docker tag job4j_devops:${env.GIT_TAG} ${dockerImage}:latest
 
-                            echo "${DOCKER_PASS}" | docker login \
-                                -u "${DOCKER_USER}" --password-stdin
+                            echo "${env.DOCKER_PASS}" | docker login \
+                                -u "${env.DOCKER_USER}" --password-stdin
 
-                            docker push ${DOCKER_USER}/job4j_devops:${env.GIT_TAG}
-                            docker push ${DOCKER_USER}/job4j_devops:latest
+                            docker push ${dockerImage}:${env.GIT_TAG}
+                            docker push ${dockerImage}:latest
 
                             docker logout
                         """
                     }
 
-                    // Clean Up
                     sh """
                         docker images "job4j_devops" --format "{{.Repository}}:{{.Tag}}" | \
                             xargs -r docker rmi || true
                         docker images "${NEXUS_REGISTRY}/job4j_devops" --format "{{.Repository}}:{{.Tag}}" | \
                             xargs -r docker rmi || true
-                        docker images "${DOCKER_USER}/job4j_devops" --format "{{.Repository}}:{{.Tag}}" | \
+                        docker images "${dockerImage}" --format "{{.Repository}}:{{.Tag}}" | \
                             xargs -r docker rmi || true
                     """
                 }
