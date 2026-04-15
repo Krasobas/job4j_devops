@@ -131,6 +131,10 @@ tasks.spotbugsMain {
     }
 }
 
+tasks.named<Jar>("jar") {
+    enabled = false
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }
@@ -150,7 +154,7 @@ tasks.register("checkJarSize") {
     group = "verification"
     description = "Checks the size of the generated JAR file."
 
-    dependsOn("jar")
+    dependsOn("bootJar")
 
     doLast {
         val jarFile = file("build/libs/${project.name}-${project.version}.jar")
