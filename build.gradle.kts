@@ -83,6 +83,7 @@ dependencies {
     implementation("com.github.spotbugs:spotbugs-annotations:4.9.8")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("com.github.loki4j:loki-logback-appender:1.6.0")
 
     // Test dependencies
     testImplementation(libs.spring.boot.starter.test)
