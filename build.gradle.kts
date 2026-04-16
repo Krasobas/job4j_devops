@@ -82,6 +82,7 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation("com.github.spotbugs:spotbugs-annotations:4.9.8")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-core")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("com.github.loki4j:loki-logback-appender:1.6.0")
 
