@@ -1,10 +1,11 @@
 package ru.job4j.devops.service;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.devops.models.Result;
 import ru.job4j.devops.repository.ResultRepository;
@@ -12,9 +13,10 @@ import ru.job4j.devops.repository.ResultRepository;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ResultDbService implements ResultService {
     private final ResultRepository resultRepository;
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     private final MeterRegistry meterRegistry;
 
     private Counter saveCounter;
